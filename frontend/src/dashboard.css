@@ -1,0 +1,18 @@
+.hoopsai_wp_wrapper a {
+    font-weight: 500;
+    padding-bottom: 1px;
+    border-bottom: 1px dotted #8aa7c0;
+}
+
+.hoopsai_wp_wrapper .dashicons-yes {
+    color: #62bf67
+}
+
+.hoopsai_wp_wrapper .dashicons-no {
+    color: #de6764;
+}
+
+.postbox .inside .hoopsai_wp_tests {
+    margin-left: -12px;
+    margin-right: -12px;
+}
