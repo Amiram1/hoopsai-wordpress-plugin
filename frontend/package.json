@@ -1,5 +1,5 @@
 {
-  "name": "hoopsai-widget",
+  "name": "hoopsai-wp",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -7,9 +7,15 @@
     "react-dom": "^16.11.0",
     "react-scripts": "3.2.0"
   },
+  "devDependencies": {
+    "archiver": "^3.1.1",
+    "rewire": "^4.0.1"
+  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "node ./scripts/start-non-split.js",
+    "build": "node ./scripts/build-non-split.js",
+    "preexport": "npm run build",
+    "export": "node ./scripts/export.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
