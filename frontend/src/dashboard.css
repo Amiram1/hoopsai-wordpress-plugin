@@ -16,3 +16,29 @@
     margin-left: -12px;
     margin-right: -12px;
 }
+
+.hoopsai_btns_list {
+    padding: 40px;
+}
+
+.hoopsai_main {
+    padding: 20px;
+}
+
+.hoopsai_content {
+    display: flex;
+}
+
+.hoopsai_previews {
+    padding-right: 40px;
+}
+
+.hoopsai_label {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+}
+
+.hoopsai_input {
+    margin-top: 5px !important;
+}

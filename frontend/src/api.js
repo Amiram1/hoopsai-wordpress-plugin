@@ -31,7 +31,7 @@ export const wpRequest = async (postDict) => {
 
     const json = await response.json();
 
-    if (json.code === 200) {
+    if (json.code === 200 || json.code === 204) {
         return json
     } else {
         throw new Error(json.message)
@@ -40,8 +40,9 @@ export const wpRequest = async (postDict) => {
 
 
 export const getSchedule = async (year, month, day) => request(`/api/v1/resources/nba/schedule/${year}/${month}/${day}`);
-export const getJournal = async (journalType, gameId) => request(`/api/v1/resources/nba/journal/recap/21900088`);
-export const createPost = async (postDict) => wpRequest(postDict);
+export const createPost = async (postDict) => {return wpRequest(postDict)};
+export const getDailyPreviews = async (year, month, day) => request(`/api/v1/resources/nba/daily/preview/${year}/${month}/${day}`);
+export const getDailyRecaps = async (year, month, day) => request(`/api/v1/resources/nba/daily/recap/${year}/${month}/${day}`);
 
 //
 //

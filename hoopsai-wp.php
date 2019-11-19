@@ -12,7 +12,6 @@
  * HoopsAI WordPress is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 2 of the License, or any later version. HoopsAI WordPress is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with HoopsAI WordPress. If not, see https://www.gnu.org/licenses/gpl-3.0.txt.
 */
 
-
 // proxy requests to the hoopsAI API so that the API key remains hidden
 function hoopsai_wp_api_proxy($request) {
     $params = $request->get_query_params();
@@ -66,18 +65,29 @@ function hoopsai_wp_create_post($request) {
     $new_pva_post = array(
         'post_type'     => 'post',
         'post_title'    => $json['postTitle'],
-        'post_content' => $json['postContent'],
-        'post_status'   => 'publish',
-        'post_category' => array( 1, 3 ), // Add it two categories.
-        'post_author'   => 1
+        'post_content'  => $json['postContent'],
+        'post_status'   => $json['postStatus'],
+        'post_category' => $json['postCategories'],
+        'post_author'   => $json['postAuthor'],
+        'tags_input'    => $json['postTags']
     );
+
+    $page = get_page_by_title((string)$json['postTitle']);
+    print_r($page);
+    echo $page;
+    if ( is_page($page->ID) )
+        return new WP_REST_RESPONSE(array(
+            'success' => true,
+            'value'   => 'post already exists',
+            'code'   => 204
+        ), 204);
 
     $post_result = wp_insert_post( $new_pva_post );
 
     if ($post_result != 0) {
         return new WP_REST_RESPONSE(array(
             'success' => true,
-            'value'   => 'post created successfully',
+            'value'   => $page,
             'code'   => 200
         ), 200);
     }
@@ -114,7 +124,8 @@ add_action('rest_api_init', function () {
 add_action('admin_enqueue_scripts', function ($hook) {
     // only load scripts on dashboard and settings page
     global $hoopsai_wp_settings_page;
-    if ($hook != 'index.php' && $hook != $hoopsai_wp_settings_page) {
+    global $hoopsai_wp_menu_page;
+    if ($hook != $hoopsai_wp_settings_page && $hook != $hoopsai_wp_menu_page) {
         return;
     }
 
@@ -143,11 +154,20 @@ add_action('admin_enqueue_scripts', function ($hook) {
 
 
 // display dashboard widget
-add_action('wp_dashboard_setup', function () {
-    wp_add_dashboard_widget('hoopsai_wp_widget', 'HoopsAI WordPress', 'hoopsai_wp_display_widget');
-    function hoopsai_wp_display_widget() {
+add_action('admin_menu', function () {
+    global $hoopsai_wp_menu_page;
+
+    $hoopsai_wp_menu_page = add_menu_page(
+        __( 'HoopsAI Menu', 'textdomain' ),
+        'HoopsAI Menu',
+        'manage_options',
+        'hoopsaimenu',
+        'hoopsai_wp_menu_page'
+    );
+
+    function hoopsai_wp_menu_page() {
         ?>
-        <div id="hoopsai_wp_dashboard"></div>
+            <div id="hoopsai_wp_dashboard"></div>
         <?php
     }
 });
