@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {getDailyRecaps, createPost, getDailyPreviews} from './api';
+import React, {useState, useEffect} from 'react';
+import {getDailyRecaps, createPost, getDailyPreviews, getCategories} from './api';
 import Html from 'slate-html-serializer'
 import {rules} from './utils/slate_rules'
 import './dashboard.css'
@@ -15,14 +15,18 @@ const ErrorMessage = ({message}) => (
 const Dashboard = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const [startDate, setStartDate] = useState(new Date());
-    const [author, setAuthor] = useState('');
     const [tags, setTags] = useState('');
-    const [categories, setCategories] = useState('');
+    const [categories, setCategories] = useState({});
+    const [category, setCategory] = useState({name: '', id: 0});
     const [autoPublish, setAutoPublish] = useState(true);
     const [autoTags, setAutoTags] = useState(true);
     const [allowOverride, setAllowOverride] = useState(true);
     const [recapsState, setRecapsState] = useState({});
     const [previewsState, setPreviewsState] = useState({});
+
+    useEffect(() => {
+        getCategories().then(res => setCategories(res));
+    }, []);
 
     const handleCreateDailyRecaps = async () => {
         const content = await getDailyRecaps(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate());
@@ -51,10 +55,8 @@ const Dashboard = () => {
 
             const targetTagsArr = tags.replace(/ /g, '').split(',');
 
-            const targetCategoriesArr = categories.replace(/ /g, '').split(',');
-
             if (autoTags) {
-                targetTagsArr.push(game['away']['team_abbrev'], game['home']['team_abbrev']);
+                targetTagsArr.push(game['game_id'].toString(), game['away']['team_abbrev'], game['home']['team_abbrev']);
             }
 
             if (game[contentType].hrtf !== null) {
@@ -67,9 +69,8 @@ const Dashboard = () => {
                     postStatus: (autoPublish) ? 'publish' : 'draft',
                     postTitle: html_header.split("<h2>")[1],
                     postContent: html_body,
-                    postAuthor: author,
                     postTags: targetTagsArr,
-                    postCategories: targetCategoriesArr,
+                    postCategories: [category.id],
                 };
                 postArr.push(postDict);
             }
@@ -115,6 +116,12 @@ const Dashboard = () => {
             </tr>));
     };
 
+    const getWPCategories = () => {
+        if (Object.keys(categories).length !== 0) {
+            return categories.value.map((category) => (<option key={category['cat_ID']} value={parseInt(category['cat_ID'])}>{category['cat_name']}</option>));
+        }
+    };
+
     return (
         <div className="hoopsai_wp_wrapper">
             <div className="hoopsai_main">
@@ -150,19 +157,18 @@ const Dashboard = () => {
                         </label>
 
                         <label className="hoopsai_label">
-                            Author: {author}
-                            <input className="hoopsai_input" type="text" value={author} onChange={(e) => setAuthor(e.target.value)}/>
-                        </label>
-
-                        <label className="hoopsai_label">
                             Tags Array: {tags}
                             <input className="hoopsai_input" type="text" value={tags} onChange={(e) => setTags(e.target.value)}/>
                         </label>
 
-                        <label className="hoopsai_label">
-                            Categories: {categories}
-                            <input className="hoopsai_input" type="text" value={categories} onChange={(e) => setCategories(e.target.value)}/>
-                        </label>
+                        <p className="hoopsai_label">
+                            Categories:
+                        </p>
+
+                        <select onChange={(e) => {setCategory({name: e.target[e.target.selectedIndex].text, id: e.target.value})}} value={category.id}>
+                            <option key='-1' value='0'>Unselected</option>
+                            {getWPCategories()}
+                        </select>
 
                         <h3>Generate Daily Previews</h3>
 
