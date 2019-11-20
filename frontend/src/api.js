@@ -58,7 +58,6 @@ export const wpGetCategories = async () => {
 };
 
 
-export const getSchedule = async (year, month, day) => request(`/api/v1/resources/nba/schedule/${year}/${month}/${day}`);
 export const createPost = async (postDict) => {return wpRequest(postDict)};
 export const getCategories = async () => {return wpGetCategories()};
 export const getDailyPreviews = async (year, month, day) => request(`/api/v1/resources/nba/daily/preview/${year}/${month}/${day}`);

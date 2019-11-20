@@ -49,7 +49,7 @@ const Dashboard = () => {
                 gameStatus: game['game_status'],
                 awayTeam: game['away']['team_abbrev'],
                 homeTeam: game['home']['team_abbrev'],
-                utc_game_date: game['utc_game_date'],
+                et_game_date: game['et_game_date'],
                 contentAvailable: game[contentType].hrtf !== null
             };
 
@@ -111,7 +111,7 @@ const Dashboard = () => {
                 <th>{targetContent[gameId].gameStatus}</th>
                 <th>{targetContent[gameId].awayTeam}</th>
                 <th>{targetContent[gameId].homeTeam}</th>
-                <th>{targetContent[gameId].utc_game_date}</th>
+                <th>{targetContent[gameId].et_game_date}</th>
                 <th>{(targetContent[gameId].contentAvailable) ? 'yes' : 'no'}</th>
             </tr>));
     };
@@ -192,7 +192,7 @@ const Dashboard = () => {
                                 <th>Game Status</th>
                                 <th>Away Team</th>
                                 <th>Home Team</th>
-                                <th>UTC Game Date</th>
+                                <th>ET Game Date</th>
                                 <th>Content Available</th>
                             </tr>
                             </thead>
@@ -208,7 +208,7 @@ const Dashboard = () => {
                                 <th>Game Status</th>
                                 <th>Away Team</th>
                                 <th>Home Team</th>
-                                <th>UTC Game Date</th>
+                                <th>ET Game Date</th>
                                 <th>Content Available</th>
                             </tr>
                             </thead>

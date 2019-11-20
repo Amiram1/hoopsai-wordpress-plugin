@@ -72,4 +72,46 @@ export const rules = [
             }
         },
     },
+    // Add a new rule that handles marks...
+    {
+        deserialize(el, next) {
+            const type = MARK_TAGS[el.tagName.toLowerCase()];
+            if (type) {
+                return {
+                    object: 'inline',
+                    type: type,
+                    nodes: next(el.childNodes),
+                }
+            }
+        },
+        serialize(obj, children) {
+            if (obj.object === 'inline') {
+                switch (obj.type) {
+                    case 'link': {
+                        const {data} = obj;
+                        const href = data['href'];
+                        return (
+                            <a target="_blank"  rel="noopener noreferrer" href={href}>
+                                {children}
+                            </a>
+                        )
+                    }
+                    case 'image': {
+                        const src = obj.data['src'];
+                        return (
+                            <img
+                                alt={''}
+                                src={src}
+                                className='hoopsai_img'
+                            />
+                        )
+                    }
+                    case 'video':
+                        return;
+                    default:
+                        return
+                }
+            }
+        },
+    },
 ];
