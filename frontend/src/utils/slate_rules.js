@@ -87,6 +87,8 @@ export const rules = [
         serialize(obj, children) {
             if (obj.object === 'inline') {
                 switch (obj.type) {
+                    case 'paragraph':
+                        return <p>{children}</p>;
                     case 'link': {
                         const {data} = obj;
                         const href = data['href'];
